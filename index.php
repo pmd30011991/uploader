@@ -1,15 +1,24 @@
+<?php 
+var_dump($_REQUEST);
+echo "----------------------";
+var_dump($_FILES);
+?>
 <html>
 <head>
-<script src="js/jquery.js"></script>
-<script src="js/jquery-ui.js"></script>
-<script src="js/upload.js"></script>
-<script>
+<script type="text/javascript" src="js/jquery.js"></script>
+<script type="text/javascript" src="js/jquery-ui.js"></script>
+<script type="text/javascript" src="js/upload.js"></script>
+<script type="text/javascript">
 $(function(){
 	$('.uploadContainner').xifinUpload({
 		multiple:true,
 		ajax:{
-			type:"POST",
-			url:""
+			url:"",
+			data:{'val1':1,'val2':2}
+		},
+		onComplete : function(data){
+		console.log(data['data']);
+			//$('.result').html(params.data);
 		}
 	});
 });
@@ -19,14 +28,8 @@ $(function(){
 <div class="uploadContainner">
 </div>
 <div class="result">
-<?php 
-foreach ($_FILES["files"]["error"] as $key => $error) {  
-    if ($error == UPLOAD_ERR_OK) {  
-        $name = $_FILES["files"]["name"][$key]; 
-        echo "request File:".$name;
-   }  
-}  
-?>
+
 </div>
+
 </body>
 </html>
