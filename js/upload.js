@@ -1,26 +1,24 @@
+/**
+ *  Name: Ajax Multiple Files Uploader Jquery Plugin
+ *  Description: jQuery Plugin Widget create a Uploader For file uploading, it's can run on IE7+, Chrome, Firefox
+ *  Author: Duy Anh
+ *  Date: 8/14/2013
+ *  Version: 1.0.0(Dev)
+ */
+
 (function($) {
-
-	// Init Browser
-	$.browser = {};
-	$.browser.mozilla = /mozilla/.test(navigator.userAgent.toLowerCase())
-	&& !/webkit/.test(navigator.userAgent.toLowerCase());
-	$.browser.webkit = /webkit/.test(navigator.userAgent.toLowerCase());
-	$.browser.opera = /opera/.test(navigator.userAgent.toLowerCase());
-	$.browser.msie = /msie/.test(navigator.userAgent.toLowerCase());
-
-	// private Function.
+	var prefix = "xifinUpload";
 	var getName = function(name) {
 		return prefix + '_' + name;
 	};
-	var prefix = "xifinUpload";
-	// INIT constants.
+	
 	var NAME_UPLOADER = getName("uploader"),
-	 	CLASS_UPLOADER = getName("uploaderclass"),
-		NAME_IFRAME = getName("iframe"),
-		NAME_UPLOAD_FORM = getName("uploadForm"),
-		//CSS_IFRAME = "width:0;height:0;visibility:hidden",
-		CSS_IFRAME = "",
-		POST_METHOD = "POST";
+	CLASS_UPLOADER = getName("uploaderclass"),
+	NAME_IFRAME = getName("iframe"),
+	NAME_UPLOAD_FORM = getName("uploadForm"),
+	//CSS_IFRAME = "width:0;height:0;visibility:hidden",
+	CSS_IFRAME = "",
+	POST_METHOD = "POST";
 	$.widget("ui.xifinUpload", {
 		options : {
 			multiple : false,
@@ -29,22 +27,21 @@
 				data:{}
 			}
 		},
-		// Constructor.
 		_init : function() {
 			this.containner = this.element;
 			this.uploader = null;
 			this.form = null;
 			this.xhr = null;
 			var that = this, ops = this.options, multi = "";
-			if (ops.multiple)
+			if (ops.multiple) {
 				multi = "multiple";
+			}
 			this.uploader_element = "<input name='files[]' type='file' class='"+CLASS_UPLOADER+"' id='" + NAME_UPLOADER + "' " + multi + " />";			
 			this.uploader = $(this.uploader_element);
 			if ($.browser.msie) {
-				
 				this.form = $("<form name='"+NAME_UPLOAD_FORM+"' id='"+NAME_UPLOAD_FORM+"' action='"+ops.ajax.url+"' method='"+POST_METHOD+"' enctype='multipart/form-data'>" +
-							"<iframe style='"+CSS_IFRAME+"' id='"+NAME_IFRAME+"' name='"+NAME_IFRAME+"' src=''></iframe>"+
-							"</form>");
+						"<iframe style='"+CSS_IFRAME+"' id='"+NAME_IFRAME+"' name='"+NAME_IFRAME+"' src=''></iframe>"+
+				"</form>");
 				this.form.append(this.uploader);
 				this.containner.html(this.form);
 			} else {
@@ -54,17 +51,10 @@
 				that._bindUploaderChangeEvent();
 			});
 			this.uploader = this.uploader.get(0);
-			
 		},
 		_getXhr : function(){
-			if (window.XMLHttpRequest) {
-				// code for IE7+, Firefox, Chrome, Opera, Safari
-				 this.xhr = new XMLHttpRequest();
-				 
-			} else {
-				// code for IE6, IE5
-				this.xhr = new ActiveXObject("Microsoft.XMLHTTP");
-			}
+			if (window.XMLHttpRequest) {this.xhr = new XMLHttpRequest();} 
+			else {this.xhr = new ActiveXObject("Microsoft.XMLHTTP");}
 			return this.xhr;
 		},
 		_bindUploaderChangeEvent : function(){
@@ -82,12 +72,8 @@
 				}
 			}
 		},
-		_getClass : function(className){
-			return "."+className;
-		},
-		_getId : function(idName){
-			return '#'+idName;
-		},
+		_getClass : function(className){return "."+className;},
+		_getId : function(idName){return '#'+idName;},
 		_getFileList : function() {
 			var files = null;
 			if ($.browser.msie) {
@@ -100,7 +86,7 @@
 		_parseArrayToParams : function(array){
 			var out = new Array();
 			for (key in array) {
-			    out.push(key + '=' + array[key]);
+				out.push(key + '=' + array[key]);
 			}
 
 			return out.join('&');
@@ -123,9 +109,9 @@
 			}
 		},
 		/// Pulbic method
+		setData : function(data){this.options.ajax.data = data;},
 		upload : function() {
 			var that = this;
-			var boundary = "--7da24f2e50046";
 			if($.browser.msie){
 				document.getElementById(NAME_UPLOAD_FORM).target = NAME_IFRAME;
 				document.getElementById(NAME_UPLOAD_FORM).submit();
@@ -134,32 +120,32 @@
 					console(iframe_body);
 					that._trigger("onComplete",null,{'data':data});
 				});
-				
+
 			} else {
 				var files = this._getFileList();
 				var xhr = this._getXhr();
 				if (xhr.upload){
 					// start upload
 					var formdata = new FormData();
-					
+
 					for (var i=0;i < files.length; i++) {
 						formdata.append("files[]", files[i]);
 					}
 					xhr.open(POST_METHOD,this.options.ajax.url, true);
-					//formdata = this._putArrayParamsToFormData(formdata, this.options.ajax.data);
-				    console.log(formdata);
-				    xhr.send(formdata);
-				    xhr.onreadystatechange = function(){
+					formdata = this._putArrayParamsToFormData(formdata, this.options.ajax.data);
+					console.log(formdata);
+					xhr.send(formdata);
+					xhr.onreadystatechange = function(){
 						if(xhr.readyState === 4 &&xhr.status === 200){
 							that._trigger("onComplete",null,{'data':xhr.responseText});
 						}
 					};
 				}
-				
+
 			}
 		}
 	});
 	$.extend($.ui.xifinUpload, {
-		version : "1.1.0"
+		version : "1.0.0"
 	});
 })(jQuery);
