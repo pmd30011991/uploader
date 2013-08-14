@@ -38,15 +38,7 @@
 			var that = this, ops = this.options, multi = "";
 			if (ops.multiple)
 				multi = "multiple";
-			this.uploader_element = "<input name='files[]' type='file' class='"+CLASS_UPLOADER+"' id='" + NAME_UPLOADER + "' " + multi + " />";
-			if (window.XMLHttpRequest) {
-				// code for IE7+, Firefox, Chrome, Opera, Safari
-				this.xhr = new XMLHttpRequest();
-			} else {
-				// code for IE6, IE5
-				this.xhr = new ActiveXObject("Microsoft.XMLHTTP");
-			}
-			
+			this.uploader_element = "<input name='files[]' type='file' class='"+CLASS_UPLOADER+"' id='" + NAME_UPLOADER + "' " + multi + " />";			
 			this.uploader = $(this.uploader_element);
 			if ($.browser.msie) {
 				
@@ -63,6 +55,17 @@
 			});
 			this.uploader = this.uploader.get(0);
 			
+		},
+		_getXhr : function(){
+			if (window.XMLHttpRequest) {
+				// code for IE7+, Firefox, Chrome, Opera, Safari
+				 this.xhr = new XMLHttpRequest();
+				 
+			} else {
+				// code for IE6, IE5
+				this.xhr = new ActiveXObject("Microsoft.XMLHTTP");
+			}
+			return this.xhr;
 		},
 		_bindUploaderChangeEvent : function(){
 			if($.browser.msie && this.form != null){
@@ -122,7 +125,7 @@
 		/// Pulbic method
 		upload : function() {
 			var that = this;
-			xhr = new XMLHttpRequest();
+			var boundary = "--7da24f2e50046";
 			if($.browser.msie){
 				document.getElementById(NAME_UPLOAD_FORM).target = NAME_IFRAME;
 				document.getElementById(NAME_UPLOAD_FORM).submit();
@@ -134,6 +137,7 @@
 				
 			} else {
 				var files = this._getFileList();
+				var xhr = this._getXhr();
 				if (xhr.upload){
 					// start upload
 					var formdata = new FormData();
@@ -142,10 +146,11 @@
 						formdata.append("files[]", files[i]);
 					}
 					xhr.open(POST_METHOD,this.options.ajax.url, true);
-					formdata = this._putArrayParamsToFormData(formdata, this.options.ajax.data);
-					xhr.send(formdata);
-					xhr.onreadystatechange = function(){
-						if(xhr.readyState === 4 && xhr.status === 200){
+					//formdata = this._putArrayParamsToFormData(formdata, this.options.ajax.data);
+				    console.log(formdata);
+				    xhr.send(formdata);
+				    xhr.onreadystatechange = function(){
+						if(xhr.readyState === 4 &&xhr.status === 200){
 							that._trigger("onComplete",null,{'data':xhr.responseText});
 						}
 					};
