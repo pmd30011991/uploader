@@ -39,9 +39,9 @@
 			this.uploader_element = "<input name='files[]' type='file' class='"+CLASS_UPLOADER+"' id='" + NAME_UPLOADER + "' " + multi + " />";			
 			this.uploader = $(this.uploader_element);
 			if ($.browser.msie) {
-				this.form = $("<form name='"+NAME_UPLOAD_FORM+"' id='"+NAME_UPLOAD_FORM+"' action='"+ops.ajax.url+"' method='"+POST_METHOD+"' enctype='multipart/form-data'>" +
-						"<iframe style='"+CSS_IFRAME+"' id='"+NAME_IFRAME+"' name='"+NAME_IFRAME+"' src=''></iframe>"+
-				"</form>");
+				this.form = $('<form name="'+NAME_UPLOAD_FORM+'" id="'+NAME_UPLOAD_FORM+'" action="'+ops.ajax.url+'" method="'+POST_METHOD+'" enctype="multipart/form-data">' +
+						'<iframe style="'+CSS_IFRAME+'" id="'+NAME_IFRAME+'" name="'+NAME_IFRAME+'" src=""></iframe>'+
+				'</form>');
 				this.form.append(this.uploader);
 				this.containner.html(this.form);
 			} else {
@@ -116,9 +116,9 @@
 				document.getElementById(NAME_UPLOAD_FORM).target = NAME_IFRAME;
 				document.getElementById(NAME_UPLOAD_FORM).submit();
 				$(this._getId(NAME_IFRAME)).load(function(){
-					var iframe_body = window.NAME_IFRAME.document.getElementsByTagName("body")[0];
-					console(iframe_body);
-					that._trigger("onComplete",null,{'data':data});
+					var contents =$(that._getId(NAME_IFRAME))[0].contentWindow.document.getElementsByTagName('body')[0].innerText
+					console.log(contents);
+					that._trigger("onComplete",null,{'data':contents});
 				});
 
 			} else {
