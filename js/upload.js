@@ -16,6 +16,7 @@
 	CLASS_UPLOADER = getName("uploaderclass"),
 	NAME_IFRAME = getName("iframe"),
 	NAME_UPLOAD_FORM = getName("uploadForm"),
+	NAME_ADDITION_INFO = getName("additionInfo"),
 	//CSS_IFRAME = "width:0;height:0;visibility:hidden",
 	CSS_IFRAME = "",
 	POST_METHOD = "POST";
@@ -41,6 +42,7 @@
 			if ($.browser.msie) {
 				this.form = $('<form name="'+NAME_UPLOAD_FORM+'" id="'+NAME_UPLOAD_FORM+'" action="'+ops.ajax.url+'" method="'+POST_METHOD+'" enctype="multipart/form-data">' +
 						'<iframe style="'+CSS_IFRAME+'" id="'+NAME_IFRAME+'" name="'+NAME_IFRAME+'" src=""></iframe>'+
+				'<div class="'+NAME_ADDITION_INFO+'" id="'+NAME_ADDITION_INFO+'"></div>'+
 				'</form>');
 				this.form.append(this.uploader);
 				this.containner.html(this.form);
@@ -97,6 +99,12 @@
 			}
 			return formdata;
 		},
+		_putArrayPramsToHtmlForm : function(htmlForm,array){
+			htmlForm.html();
+			for (key in array) {
+				htmlForm.append('<input type="hidden" name="'+key+'" value="'+array[key]+'" />');
+			}
+		},
 		_addUploader : function(){
 			var that = this;
 			var form = $(this._getId(NAME_UPLOAD_FORM));
@@ -113,11 +121,11 @@
 		upload : function() {
 			var that = this;
 			if($.browser.msie){
+				that._putArrayPramsToHtmlForm($(that._getId(NAME_UPLOAD_FORM)).find(that._getId(NAME_ADDITION_INFO)), that.options.ajax.data);
 				document.getElementById(NAME_UPLOAD_FORM).target = NAME_IFRAME;
 				document.getElementById(NAME_UPLOAD_FORM).submit();
 				$(this._getId(NAME_IFRAME)).load(function(){
 					var contents =$(that._getId(NAME_IFRAME))[0].contentWindow.document.getElementsByTagName('body')[0].innerText
-					console.log(contents);
 					that._trigger("onComplete",null,{'data':contents});
 				});
 
